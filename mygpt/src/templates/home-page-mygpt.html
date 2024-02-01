@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href={{ url_for("static", filename = "style.css") }} />
+<title>AI money watchdog prototype</title>
+</head>
+
+<body onLoad="wd_chat_bottom()">
+
+{% with messages = get_flashed_messages() %}
+   {% if messages %}
+      {% for message in messages %}
+         {{ message }}
+      {% endfor %}
+   {% endif %}
+{% endwith %}
+
+<img src="/img/Graphic1.png" width="450" class="wd_lefttopcorner">
+<img src="/img/Graphic1.png" width="450" class="rotate180 wd_rightbottomcorner">
+
+{% if predict %}
+	{% if predict1 == 2 %}
+		<img src="/img/topbox_red.png" class="wd_topbox">
+		<div class="wd_topbox_text"><strong>AI money watchdog - alarm</strong>!</div>
+		<div id="some_text2" class="wd_some_text2"><strong>{{predict[0]}}</strong></div>
+	{% elif predict1 == 1 %}
+		<img src="/img/topbox_orange.png" class="wd_topbox">
+		<div class="wd_topbox_text">AI money watchdog - warnings!</div>
+		<div id="some_text2" class="wd_some_text2">{{predict[0]}}</div>
+	{% else %}
+		<img src="/img/topbox.png" class="wd_topbox">
+		<div class="wd_topbox_text">AI money watchdog - no allerts</div>
+		<div id="some_text2" class="wd_some_text2">{{predict[0]}}</div>
+	{% endif %}
+	<ul class="wd_punditlist">
+		{% for p in predict[3] %}
+			{% if p[0] == 2 %}
+				<li class="wd_punditlist_elem"><span style="background-color:#CC0000; font-weight:bold; color:#FFFFFF; padding:2px 4px 2px 4px;">{{"{:.2%}".format(p[2])}}</span>
+					<span style="color:#CF0E0E"> Pundit {{p[3]+1}} said: possible card fraud. </span><span style="font-size:12px"><a href="/details/{{p[3]}}">[details]</a></span></li>
+			{% elif p[0] == 1 %}
+				<li class="wd_punditlist_elem"><span style="background-color:#FF9900; color:#FFFFFF; padding:2px 4px 2px 4px;">{{"{:.2%}".format(p[2])}}</span>
+					<span> Pundit {{p[3]+1}} said: suspicious payment. </span><span style="font-size:12px"><a href="/details/{{p[3]}}">[details]</a></span></li>
+			{% else %}
+				<li class="wd_punditlist_elem"><span style="background-color:#218C41; color:#FFFFFF; padding:2px 4px 2px 4px;">{{"{:.2%}".format(p[2])}}</span>
+					<span> Pundit {{p[3]+1}} said: standard payment. </span><span style="font-size:12px"><a href="/details/{{p[3]}}">[details]</a></span></li>
+			{% endif %}
+		{% endfor %}
+	</ul>
+	<div class="wd_footer_sums"><span class="wd_footer_sums1" style="font-weight:bold; border-bottom-style:solid;">{{"${:,.2f}".format(predict[4][0])}}</span>
+								{% for pl in predict[4][1:]%}<span class="wd_footer_sums1">{{"${:,.2f}".format(pl)}}</span>{% endfor %}
+								<span class="wd_footer_sums1" style="font-weight:bold;">...</span></div>
+{% elif predict_t %}
+	{% if predict1 == 2 %}
+		<img src="/img/topbox_red.png" class="wd_topbox">
+		<div class="wd_topbox_text"><strong>AI money watchdog - alarm</strong>!</div>
+	{% elif predict1 == 1 %}
+		<img src="/img/topbox_orange.png" class="wd_topbox">
+		<div class="wd_topbox_text">AI money watchdog - warnings!</div>
+	{% else %}
+		<img src="/img/topbox.png" class="wd_topbox">
+		<div class="wd_topbox_text">AI money watchdog - no allerts</div>
+	{% endif %}
+	<div id="some_text3" class="wd_some_text3">This is stub for technics: Flask session id, saving NN parameters to mysql, loading </div>
+	<div id="some_text4" class="wd_some_text4">{{sessionid}}</div>
+	<div id="some_text5" class="wd_some_text5">{{predict_t}}</div>
+	<div id="some_text6" class="wd_some_text6">{{predict_i}}</div>
+{% elif chat %}
+	{% if predict1 == 2 %}
+		<img src="/img/topbox_red.png" class="wd_topbox">
+		<div class="wd_topbox_text"><strong>AI money watchdog - alarm</strong>!</div>
+	{% elif predict1 == 1 %}
+		<img src="/img/topbox_orange.png" class="wd_topbox">
+		<div class="wd_topbox_text">AI money watchdog - warnings!</div>
+	{% else %}
+		<img src="/img/topbox.png" class="wd_topbox">
+		<div class="wd_topbox_text">AI money watchdog - no allerts</div>
+	{% endif %}
+	<div id="wd_chat_head" class="wd_chat_head">Chat with Fennec bot</div>
+	<div class="wd_chat" id="wd_chat">
+		<ul class="wd_chatlist">
+			{% for rep in chat %}
+				{% if rep[0] == 0 %}
+					<li class="wd_chatlist_user">{{rep[1]}}</li>
+				{% else %}
+					<li class="wd_chatlist_bot">{{rep[1]}}</li>
+				{% endif %}
+			{%endfor%}
+		</ul>
+	</div>
+
+	<form name="chatinput" id="chatinput" method="post" action="{{sub_path}}chat/{% if predict1 %}{{predict1}}{% else %}0{% endif %}" onSubmit="check_input('wd_chatinput')">
+	  <textarea name="wd_chatinput" class="wd_chatinput" id="wd_chatinput" cols="50" rows="3"></textarea>
+	  <input name="SubmitC" id= "SubmitC" type="submit" class="wd_submitchat" value="Enter">
+	  <a href="{{sub_path}}" class="wd_cancelchat">Cancel</a>
+	</form>
+{% else %}
+	<img src="/img/topbox.png" class="wd_topbox">
+	<div class="wd_topbox_text">AI money watchdog - no allerts</div>
+	<div id="some_text1" class="wd_some_text1">Waiting for input</div>
+{% endif %}
+
+<a href="/chat/{% if predict1 %}{{predict1}}{% else %}0{% endif %}"><img src="/img/fenek.gif" width="60" class="wd_fenek1">
+
+<div class="wd_about"><a href="/static/about.html" target="_blank"><b>Readme</b></a></div>
+<div class="wd_testinputheader">Test input for prototype </div>
+<img src="/img/callout2.png" width="120" class="wd_callout2">
+<img src="/img/ANN2.png" width="400" class="wd_annpicture">
+<input name="TestInput1" id= "TestInput1" type="button" class="wd_testinputbutton1" value="Input SMS text" onClick="test_input(1)">
+<input name="TestInput2" id= "TestInput2" type="button" class="wd_testinputbutton2" value="Input csv string" onClick="test_input(2)">
+<img src="/img/callout1.png" width="500" class="wd_callout1">
+
+<form name="forminput" id="forminput" method="post" action="{{sub_path}}" onSubmit="check_input('wd_testinput')">
+  <div style="visibility:hidden" id="smsinputlabel" class="wd_inputlabel">please enter SMS text example for AI money watchdog:</div>
+  <div style="visibility:hidden" id="csvinputlabel" class="wd_inputlabel">please enter csv text example for AI money watchdog:</div>
+
+  <textarea style="visibility:hidden" name="wd_testinput" class="wd_testinput" id="wd_testinput" cols="45" rows="3" style="width: 400px;"></textarea>
+
+  <input style="visibility:hidden" name="Submit1" id= "Submit1" type="submit" class="wd_submitbutton" value="Analyze it">
+  <input style="visibility:hidden" name="Submit2" id= "Submit2" type="submit" class="wd_submitbutton" value="Analyze it">
+</form>
+
+{% if sms_examples %}
+  <div style="visibility:hidden" id="sms_exampleslabel" class="wd_exampleslabel">SMS text examples</div>
+  <div class="wd_scrollable" id="sms_examples" style="visibility:hidden">
+    <table border=0>
+		{% for nn in sms_examples %}
+			<tr>
+			<td><p onClick="fill_input(this.innerHTML)">{{nn}}</p></td>
+			</tr>
+		{%endfor%}
+	</table>
+  </div>
+{% endif%}
+
+{% if csv_examples %}
+  <div style="visibility:hidden" id="csv_exampleslabel" class="wd_exampleslabel">csv text examples</div>
+  <div class="wd_scrollable" id="csv_examples" style="visibility:hidden">
+    <table border=0>
+		{% for nn in csv_examples %}
+			<tr>
+			<td><p onClick="fill_input(this.innerHTML)">{{nn}}</p></td>
+			</tr>
+		{%endfor%}
+	</table>
+  </div>
+{% endif%}
+
+<p class="wd_footer">AI money watchdog prototype v0.001</p>
+
+<script type="text/javascript" language="JavaScript">
+function test_input(iv){
+	if (iv == 1 ) {
+		document.getElementById("TestInput2").style.visibility = 'hidden';
+
+		document.getElementById("smsinputlabel").style.visibility = 'visible';
+		document.getElementById("wd_testinput").style.visibility = 'visible';
+		document.getElementById("Submit1").style.visibility = 'visible';
+		document.getElementById("sms_exampleslabel").style.visibility = 'visible';
+		document.getElementById("sms_examples").style.visibility = 'visible';
+	}
+	if (iv == 2) {
+		document.getElementById("TestInput1").style.visibility = 'hidden';
+
+		document.getElementById("csvinputlabel").style.visibility = 'visible';
+		document.getElementById("wd_testinput").style.visibility = 'visible';
+		document.getElementById("Submit2").style.visibility = 'visible';
+		document.getElementById("csv_exampleslabel").style.visibility = 'visible';
+		document.getElementById("csv_examples").style.visibility = 'visible';
+	}
+}
+
+function fill_input(v){
+	if (v == "" ) return;
+	document.getElementById("wd_testinput").value = v;
+}
+
+function check_input(form){
+	if (document.getElementById(form).value==""){
+		alert("please enter an example!");
+		return false;
+	}
+}
+
+function wd_chat_bottom(){
+	var objDiv = document.getElementById("wd_chat");
+	objDiv.scrollTop = objDiv.scrollHeight;
+}
+
+</script>
+</body>
+</html>
