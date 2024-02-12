@@ -7,9 +7,13 @@ from openai import OpenAI
 
 STORAGE_FILES = "/www/mygpt/storage/"
 OPENAI_KEY_FILE = "/www/mygpt/keys/chat_gpt_anton.sec"
+SECRET_URL = "/www/mygpt/keys/secret_url.sec"
 
 with open(OPENAI_KEY_FILE, 'r') as f:
     openai_key = f.read().strip()
+
+with open(SECRET_URL, 'r') as f:
+    secret_url = f.read().strip()
 
 application = Flask(__name__)
 application.secret_key = 'random string'
@@ -17,11 +21,11 @@ sub_path = "/"
 
 GREETINGS = "hi, I'm chat GPT bot"
 
-@application.route(sub_path + "id/<uuid>", methods = ['GET'])
+@application.route(sub_path + ("/" + secret_url + "/" if secret_url else "") + "id/<uuid>", methods = ['GET'])
 def home_page_wd1(uuid):
     return _home_page(uuid)
 
-@application.route(sub_path, methods = ['POST', 'GET'])
+@application.route(sub_path + ("/" + secret_url if secret_url else ""), methods = ['POST', 'GET'])
 def home_page_wd2():
     return _home_page(None)
 
