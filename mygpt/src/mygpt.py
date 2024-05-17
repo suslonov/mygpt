@@ -58,7 +58,7 @@ def _home_page(uuid):
             with open(file_name, "w") as f:
                 json.dump(messages, f)
         return render_template('home-page-mygpt.html',
-                               sub_path = sub_path + (secret_url if secret_url else ""),
+                               sub_path = sub_path + ("/" + secret_url if secret_url else ""),
                                greetings = GREETINGS,
                                session_id = sessionid,
                                messages = messages)
@@ -75,7 +75,7 @@ def _home_page(uuid):
             sessionid = md5(sessionstr.encode("utf8")).hexdigest()
             messages = []
         return render_template('home-page-mygpt.html',
-                               sub_path = sub_path + (secret_url if secret_url else ""),
+                               sub_path = sub_path + ("/" + secret_url if secret_url else ""),
                                greetings = GREETINGS,
                                session_id = sessionid,
                                messages = messages)
