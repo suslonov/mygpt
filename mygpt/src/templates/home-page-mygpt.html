@@ -21,9 +21,17 @@
 	<ul class="wd_chatlist">
 		{% for rep in messages %}
 			{% if rep["role"] == "system" %}
-				<li class="wd_chatlist_bot">{{rep["content"]}}</li>
-			{% else %}
-				<li class="wd_chatlist_user">{{rep["content"]}}</li>
+				<li class="wd_chatlist_bot">
+    				{% for cl in rep["content_list"] %}
+        				{{cl}}<br>
+            		{%endfor%}
+				</li>
+			{% elif rep["role"] == "user" %}
+				<li class="wd_chatlist_user">
+    				{% for cl in rep["content_list"] %}
+        				{{cl}}<br>
+            		{%endfor%}
+				</li>
 			{% endif %}
 		{%endfor%}
 	</ul>

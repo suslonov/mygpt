@@ -44,6 +44,7 @@ def _home_page(uuid):
             messages = []
         
         if re:
+            re = re.replace("\r", "")
             messages.append({"role": "user", "content": re})
             client = OpenAI(api_key=openai_key)
             completion = client.chat.completions.create(
@@ -55,11 +56,12 @@ def _home_page(uuid):
             messages.append({"role": "system", "content": completion.choices[0].message.content})
             messages.append({"session_id": sessionid})
             #messages.pop()
-            if not re[:1] == "--":
+            if not re[:2] == "--":
                 with open(file_name, "w") as f:
                     json.dump(messages, f)
             for m in messages:
-                m["content"].replace("\n", "<br>")
+                if "content" in m:
+                    m["content_list"] = m["content"].split("\n")
         return render_template('home-page-mygpt.html',
                                sub_path = sub_path + (secret_url if secret_url else ""),
                                greetings = GREETINGS,
@@ -73,6 +75,9 @@ def _home_page(uuid):
                 messages = json.load(f)
             if len(messages) > 0 and "session_id" in messages[-1]:
                 messages.pop()
+            for m in messages:
+                if "content" in m:
+                    m["content_list"] = m["content"].split("\n")
         else:
             sessionstr = request.environ.get('HTTP_X_REAL_IP', request.remote_addr) + str(datetime.datetime.now())
             sessionid = md5(sessionstr.encode("utf8")).hexdigest()
