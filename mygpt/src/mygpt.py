@@ -55,8 +55,11 @@ def _home_page(uuid):
             messages.append({"role": "system", "content": completion.choices[0].message.content})
             messages.append({"session_id": sessionid})
             #messages.pop()
-            with open(file_name, "w") as f:
-                json.dump(messages, f)
+            if not re[:1] == "--":
+                with open(file_name, "w") as f:
+                    json.dump(messages, f)
+            for m in messages:
+                m["content"].replace("\n", "<br>")
         return render_template('home-page-mygpt.html',
                                sub_path = sub_path + (secret_url if secret_url else ""),
                                greetings = GREETINGS,
