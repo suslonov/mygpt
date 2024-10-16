@@ -17,7 +17,7 @@ with open(SECRET_URL, 'r') as f:
 
 application = Flask(__name__)
 application.secret_key = 'random string'
-sub_path = ""
+sub_path = "/"
 
 GREETINGS = "hi, I'm chat GPT bot"
 
@@ -29,14 +29,19 @@ def home_page_wd1(uuid):
 def home_page_wd2():
     return _home_page(None)
 
-def _home_page(uuid):
+def _home_page(uuid, clear=None):
     if request.method == 'POST':
         if "/id/" in request.referrer:
             uuid = request.referrer[request.referrer.find("/id/") + 4:]
         result = request.form
         re = result.get("wd_chatinput")
+        clear_button = result.get("clear_button")
         sessionid = result.get("session_id")
         file_name = STORAGE_FILES + md5(sessionid.encode("utf8")).hexdigest()
+        if clear_button:
+            messages = []
+            re = ""
+            
         try:
             with open(file_name, "r") as f:
                 messages = json.load(f)
@@ -65,7 +70,7 @@ def _home_page(uuid):
                 if "content" in m:
                     m["content_list"] = m["content"].split("\n")
         return render_template('home-page-mygpt.html',
-                               sub_path = (secret_url if secret_url else "") + ("/id/" + uuid if uuid else ""),
+                               sub_path = sub_path + (secret_url + "/" if secret_url else ""),
                                greetings = GREETINGS,
                                session_id = sessionid,
                                messages = messages)
@@ -85,7 +90,7 @@ def _home_page(uuid):
             sessionid = md5(sessionstr.encode("utf8")).hexdigest()
             messages = []
         return render_template('home-page-mygpt.html',
-                               sub_path = sub_path + (secret_url if secret_url else "") + ("/id/" + uuid if uuid else ""),
+                               sub_path = sub_path + (secret_url + "/" if secret_url else ""),
                                greetings = GREETINGS,
                                session_id = sessionid,
                                messages = messages)
