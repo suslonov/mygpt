@@ -1,6 +1,7 @@
 *.sec
 # Byte-compiled / optimized / DLL files
 __pycache__/
+mygpt/texts/
 *.py[cod]
 *$py.class
 
