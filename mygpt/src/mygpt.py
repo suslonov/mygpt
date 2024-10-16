@@ -17,20 +17,22 @@ with open(SECRET_URL, 'r') as f:
 
 application = Flask(__name__)
 application.secret_key = 'random string'
-sub_path = "/"
+sub_path = ""
 
 GREETINGS = "hi, I'm chat GPT bot"
 
-@application.route(sub_path + ("/" + secret_url + "/" if secret_url else "") + "id/<uuid>", methods = ['GET'])
+@application.route("/" + (secret_url + "/" if secret_url else "") + "/id/<uuid>", methods = ['POST', 'GET'])
 def home_page_wd1(uuid):
     return _home_page(uuid)
 
-@application.route(sub_path + ("/" + secret_url if secret_url else ""), methods = ['POST', 'GET'])
+@application.route("/" + (secret_url + "/" if secret_url else ""), methods = ['POST', 'GET'])
 def home_page_wd2():
     return _home_page(None)
 
 def _home_page(uuid):
     if request.method == 'POST':
+        if "/id/" in request.referrer:
+            uuid = request.referrer[request.referrer.find("/id/") + 4:]
         result = request.form
         re = result.get("wd_chatinput")
         sessionid = result.get("session_id")
@@ -63,7 +65,7 @@ def _home_page(uuid):
                 if "content" in m:
                     m["content_list"] = m["content"].split("\n")
         return render_template('home-page-mygpt.html',
-                               sub_path = sub_path + (secret_url if secret_url else ""),
+                               sub_path = sub_path + (secret_url if secret_url else "") + ("/id/" + uuid if uuid else ""),
                                greetings = GREETINGS,
                                session_id = sessionid,
                                messages = messages)
@@ -83,7 +85,7 @@ def _home_page(uuid):
             sessionid = md5(sessionstr.encode("utf8")).hexdigest()
             messages = []
         return render_template('home-page-mygpt.html',
-                               sub_path = sub_path + (secret_url if secret_url else ""),
+                                sub_path = sub_path + (secret_url if secret_url else "") + ("/id/" + uuid if uuid else ""),
                                greetings = GREETINGS,
                                session_id = sessionid,
                                messages = messages)
