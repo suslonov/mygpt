@@ -85,7 +85,7 @@ def _home_page(uuid):
             sessionid = md5(sessionstr.encode("utf8")).hexdigest()
             messages = []
         return render_template('home-page-mygpt.html',
-                               sub_path = ("/id/" + uuid if uuid else ""),
+                               sub_path = sub_path + (secret_url if secret_url else "") + ("/id/" + uuid if uuid else ""),
                                greetings = GREETINGS,
                                session_id = sessionid,
                                messages = messages)
