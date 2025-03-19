@@ -55,7 +55,7 @@ def _home_page(uuid, clear=None):
             messages.append({"role": "user", "content": re})
             client = OpenAI(api_key=openai_key)
             completion = client.chat.completions.create(
-                model="gpt-4o",
+                model="gpt-4o-mini",
                 temperature=0,
                 # response_format={ "type": "json_object" },
                 messages=messages

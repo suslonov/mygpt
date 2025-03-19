@@ -1,0 +1,13 @@
+// Simple Example
+digraph {
+	A [label="Node A"]
+	B [label="Node B"]
+	C [label="Node C"]
+	D [label="Node D"]
+	E [label="Node E"]
+	A -> B
+	B -> C
+	C -> A
+	B -> D
+	D -> E
+}
