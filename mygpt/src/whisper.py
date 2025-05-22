@@ -66,6 +66,8 @@ text_input = "This is a story about a new, AI-driven educational platform. [paus
 text_input += "Our platform uses AI extensively to simplify knowledge sharing for social science experts, humanitarians, psychologists [pause]"
 text_input += "Our platform includes AI advisers, remembering listeners circumstances and helping them for a long time [pause]"
 
+text_input = "Sharing knowledge: lectures, recipes, etc."
+
 # text_input = "We solve our customers problems - and entertain them. [pause]"
 # text_input += "Imagine someone facing a pivotal life stage: Entering their later years, Navigating relationship challenges,"
 # text_input += "Changing careers, Moving to a new country, Or dealing with various other life disruptions. [pause]"
@@ -85,7 +87,8 @@ text_input += "Our platform includes AI advisers, remembering listeners circumst
 # text_input += "Or even When Kvasir meets Anansi. [pause]"
 # text_input += "The final choice will be done with the basic team complition. [pause]"
 
-output_audio = "/home/incoming/kv_1.mp3"
+output_audio = '/media/Data/edtech/tmp/shimmer_40.mp3'
+
 
 response = client.audio.speech.create(
     model="tts-1-hd",

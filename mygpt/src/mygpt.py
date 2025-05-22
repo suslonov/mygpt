@@ -41,7 +41,7 @@ def _home_page(uuid, clear=None):
         if clear_button:
             messages = []
             re = ""
-            
+
         try:
             with open(file_name, "r") as f:
                 messages = json.load(f)
@@ -49,7 +49,7 @@ def _home_page(uuid, clear=None):
                 messages.pop()
         except:
             messages = []
-        
+
         if re:
             re = re.replace("\r", "")
             messages.append({"role": "user", "content": re})
@@ -60,7 +60,7 @@ def _home_page(uuid, clear=None):
                 # response_format={ "type": "json_object" },
                 messages=messages
             )
-            messages.append({"role": "system", "content": completion.choices[0].message.content})
+            messages.append({"role": "assistant", "content": completion.choices[0].message.content})
             messages.append({"session_id": sessionid})
             #messages.pop()
             if not re[:2] == "--":
